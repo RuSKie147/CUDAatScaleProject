@@ -32,7 +32,7 @@
 ################################################################################
 
 # Define the compiler and flags
-NVCC = /usr/local/cuda/bin/nvcc
+NVCC ?= nvcc
 CXX = g++
 CXXFLAGS = -std=c++11 -I/usr/local/cuda/include -Iinclude
 LDFLAGS = -L/usr/local/cuda/lib64 -lcudart -lnppc -lnppial -lnppicc -lnppidei -lnppif -lnppig -lnppim -lnppist -lnppisu -lnppitc
@@ -44,7 +44,7 @@ DATA_DIR = data
 LIB_DIR = lib
 
 # Define source files and target executable
-SRC = $(SRC_DIR)/imageRotationNPP.cpp
+SRC = $(SRC_DIR)/imageRotationNPP.cu
 TARGET = $(BIN_DIR)/imageRotationNPP
 
 # Define the default rule
@@ -56,8 +56,10 @@ $(TARGET): $(SRC)
 	$(NVCC) $(CXXFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
 
 # Rule for running the application
-run: $(TARGET)
-	./$(TARGET) --input $(DATA_DIR)/Lena.png --output $(DATA_DIR)/Lena_rotated.png
+run: all
+	./bin/imageRotationNPP	--input	data/Lena.png	--output	data/Lena_rotated.png	--block	16	16	1	--grid	32	32	1
+
+
 
 # Clean up
 clean:
